@@ -4,6 +4,7 @@ const Waterpark = require('../models/waterpark');
 const BASE_URL = process.env.BASE_URL;
 // Add Waterpark
 exports.addWaterpark = async (req, res) => {
+  console.log(req.body);
   try {
     const {
       name,
@@ -20,7 +21,7 @@ exports.addWaterpark = async (req, res) => {
       faqs,
     } = req.body;
 
-
+    console.log(req.body);
     const adultDiscountedPrice = adultPrice - (adultPrice * discountPercentage) / 100;
     const childDiscountedPrice = childPrice - (childPrice * discountPercentage) / 100;
 
@@ -29,17 +30,17 @@ exports.addWaterpark = async (req, res) => {
     const images = req.files.map((file) => `${BASE_URL}/${file.path.replace(/\\/g, '/')}`);
 
     // Parse FAQs
-    const faqsArray = JSON.parse(faqs);
-    if (!Array.isArray(included) || !Array.isArray(excluded)) {
-      return res.status(400).json({ message: '`included` and `excluded` should be arrays' });
-    }
+    const faqsArray = faqs && JSON.parse(faqs);
+    // if (!Array.isArray(included) || !Array.isArray(excluded)) {
+    //   return res.status(400).json({ message: '`included` and `excluded` should be arrays' });
+    // }
 
     const newWaterpark = new Waterpark({
       name,
       description,
       location,
-      included : JSON.parse(included[1]),
-      excluded :JSON.parse(excluded[1]),
+      included :included,
+      excluded :excluded,
       map,
       adultPrice,
       childPrice,
@@ -62,6 +63,7 @@ exports.addWaterpark = async (req, res) => {
 
 
 exports.getAllWaterparks = async (req, res) => {
+  console.log('getAllWaterparks');
   try {
     const waterparks = await Waterpark.find();
     console.log(waterparks);
